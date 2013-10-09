@@ -41,7 +41,7 @@ function numexpr{A1<:AbstractNumExpr}(f::NumFunc, a1::A1)
 	UnaryNumExpr{A1}(f, a1)
 end
 
-function numexpr{A1<:AbstractNumExpr.A2<:AbstractNumExpr}(f::NumFunc, a1::A1, a2::A2)
+function numexpr{A1<:AbstractNumExpr,A2<:AbstractNumExpr}(f::NumFunc, a1::A1, a2::A2)
 	BinaryNumExpr{A1,A2}(f, a1, a2)
 end
 
