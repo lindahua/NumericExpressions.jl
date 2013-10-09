@@ -19,17 +19,21 @@ using Base.Test
 
 # type inference for operators
 
+const vecopmap = {
+	* => .*, 
+	/ => ./, 
+	^ => .^, 
+	== => .==, 
+	!= => .!=, 
+	> => .>, 
+	< => .<, 
+	>= => .>=, 
+	<= => .<=};
+
 base_tyinfer(f::Function, T1::Type) = eltype(f(ones(T1, 1)))
 function base_tyinfer(f::Function, T1::Type, T2::Type)
-	if f == *
-		eltype(ones(T1, 1) .* ones(T2, 1))
-	elseif f == /
-		eltype(ones(T1, 1) ./ ones(T2, 1))
-	elseif f == ^
-		eltype(ones(T1, 1) .^ ones(T2, 1))
-	else
-		eltype(f(ones(T1, 1), ones(T2, 1)))
-	end
+	vf::Function = haskey(vecopmap, f) ? vecopmap[f] : f
+	eltype(vf(ones(T1, 1), ones(T2, 1)))
 end
 
 for f in [+, -]
@@ -39,7 +43,7 @@ for f in [+, -]
 	end
 end
 
-for f in [+, -, *, /, ^]
+for f in [+, -, *, /, ^, ==, !=, >, >=, <, <=]
 	for t1 in [Bool, Int32, Uint32, Int64, Uint64, Float32, Float64]
 		for t2 in [Bool, Int32, Uint32, Int64, Uint64, Float32, Float64]
 			# println("testing result type of $f on $t1 and $t2")

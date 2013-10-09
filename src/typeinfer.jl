@@ -31,6 +31,8 @@ end
 # import math functions
 
 import Base.+, Base.-, Base.*, Base./, Base.^
+import Base.~, Base.&, Base.|
+import Base.==, Base.!=, Base.>, Base.>=, Base.<, Base.<=
 
 # convert a numeric type to floating point
 
@@ -75,7 +77,12 @@ end
 / {T1<:Integer,T2<:Integer}(I::Type{NumTypeInference}, ::Type{T1}, ::Type{T2}) = promote_type(fptype(T1), fptype(T2))
 
 for op in [:&, :|]
-	@eval ($op){T<:Integer}(::Type{NumTypeInference}, ::Type{T}, ::Type{T}) = T
-	@eval ($op){T1<:Integer, T2<:Integer}(::Type{NumTypeInference}, ::Type{T1}, ::Type{T2}) = promote_type(T1, T2)
+	@eval ($op){T<:Integer}(I::Type{NumTypeInference}, ::Type{T}, ::Type{T}) = T
+	@eval ($op){T1<:Integer, T2<:Integer}(I::Type{NumTypeInference}, ::Type{T1}, ::Type{T2}) = promote_type(T1, T2)
 end
+
+for op in [:(==), :(!=), :(>), :(>=), :(<), :(<=)]
+	@eval ($op){T1<:Number, T2<:Number}(I::Type{NumTypeInference}, ::Type{T1}, ::Type{T2}) = Bool
+end
+
 
