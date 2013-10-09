@@ -36,7 +36,7 @@ function base_tyinfer(f::Function, T1::Type, T2::Type)
 	eltype(vf(ones(T1, 1), ones(T2, 1)))
 end
 
-for f in [+, -]
+for f in [+, -, abs, abs2]
 	for t in [Bool, Int32, Uint32, Int64, Uint64, Float32, Float64]
 		# println("testing result type of $f on $t")
 		@test resulttype(f, t) == base_tyinfer(f, t)

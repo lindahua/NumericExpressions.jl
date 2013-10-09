@@ -34,6 +34,9 @@ import Base.+, Base.-, Base.*, Base./, Base.^
 import Base.~, Base.&, Base.|
 import Base.==, Base.!=, Base.>, Base.>=, Base.<, Base.<=
 
+import Base.abs, Base.abs2
+
+
 # convert a numeric type to floating point
 
 for t in [:Bool, :Int8, :Uint8, :Int16, :Uint16]
@@ -47,7 +50,7 @@ end
 fptype{T<:FloatingPoint}(::Type{T}) = T
 
 
-# unary operators
+# unary functions
 
 for op in [:+, :-]
 	@eval ($op){T1<:Number}(I::Type{NumTypeInference}, ::Type{T1}) = T1
@@ -56,6 +59,30 @@ end
 - (I::Type{NumTypeInference}, T::Type{Bool}) = Int
 
 ~ {T<:Integer}(I::Type{NumTypeInference}, ::Type{T}) = T
+
+abs_rtype{T<:Number}(::Type{T}) = T
+abs_rtype(::Type{Int8}) = Int
+abs_rtype(::Type{Int16}) = Int
+abs_rtype(::Type{Int32}) = Int
+abs_rtype(::Type{Int64}) = Int64
+abs_rtype(::Type{Uint8}) = Uint8
+abs_rtype(::Type{Uint16}) = Uint16
+abs_rtype(::Type{Uint32}) = Uint32
+abs_rtype(::Type{Uint64}) = Uint64
+
+abs{T<:Number}(I::Type{NumTypeInference}, ::Type{T}) = abs_rtype(T)
+
+abs2_rtype{T<:Number}(::Type{T}) = T
+abs2_rtype(::Type{Int8}) = Int
+abs2_rtype(::Type{Int16}) = Int
+abs2_rtype(::Type{Int32}) = Int
+abs2_rtype(::Type{Int64}) = Int64
+abs2_rtype(::Type{Uint8}) = Uint
+abs2_rtype(::Type{Uint16}) = Uint
+abs2_rtype(::Type{Uint32}) = Uint
+abs2_rtype(::Type{Uint64}) = Uint64
+
+abs2{T<:Number}(I::Type{NumTypeInference}, ::Type{T}) = abs2_rtype(T)
 
 
 # binary operators 
@@ -84,5 +111,4 @@ end
 for op in [:(==), :(!=), :(>), :(>=), :(<), :(<=)]
 	@eval ($op){T1<:Number, T2<:Number}(I::Type{NumTypeInference}, ::Type{T1}, ::Type{T2}) = Bool
 end
-
 
